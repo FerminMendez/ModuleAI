@@ -38,19 +38,20 @@ def updateParamsDesendentGradient(currentParams, df_x, df_y, alfa, periods):
             print("df_x and df_y size are CORRECT")
         else:
             print("df_x df_y size INCORRECT")
-    delta = 0.00000001 # This delta is the min expected value. If the train process reach a number lower before the last iteration the functino returns.
+
+    delta = 0.00000001 # delta is the minimum expected value. If the train process reach a number lower before the last iteration the functino returns.
     const_alfa_m = alfa / num_rows  # This is the part of [lr/m] in -> new_teta = teta - [lr/m] * gradient
     errors = list()
+
     for p in range(periods):
         temp = currentParams
         evaluated_h = df_x.dot(currentParams)# As we add the 'ones' or bias column in df_x dataframe the matrix dot product is equivalent to evaluate the function for each register.
         if(debug):
-            print("params applied:\n",evaluated_h)
-        # Apply activation function to make the regression logistic model
-        activated_values = evaluated_h.apply(actvfun)
+            print("params applied:\n",activated_values) 
+        activated_values = evaluated_h.apply(actvfun) # Apply activation function to make the regression logistic model
         if(debug):
-            print("activation function applied:\n", activated_values)
-        diff =  activated_values - df_y
+            print("activation function applied:\n",activated_values)
+        diff = activated_values - df_y
         if(debug):
             print("diff:\n",diff)
         for i in range(num_col):
