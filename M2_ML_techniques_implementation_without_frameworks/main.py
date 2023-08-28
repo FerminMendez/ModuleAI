@@ -58,12 +58,12 @@ df_x_test=include_bias(df_x_test)
 num_params = df_x_train.shape[1] #Number of features
 # Create a hypotesis
 currentParams = np.random.rand(num_params)
-intialGuess=currentParams
-print("Initial hypotesis: ", currentParams)
+intialGuess = currentParams.copy()
+print("Initial hypotesis: ", intialGuess)
 
 # train=updateParamsDesendentGradient(currentParams,df_x,df_y,alfa,periods):
 alfa = 0.05  # Alfa is the learning rate
-periods = 3000  # Is the number of repetitions training in the gradient desendent
+periods = 3000 # Is the number of repetitions training in the gradient desendent
 
 #train with our gradient desendent (GD) function
 [currentParams, errors] = train(currentParams, df_x_train, df_y_train, alfa, periods)

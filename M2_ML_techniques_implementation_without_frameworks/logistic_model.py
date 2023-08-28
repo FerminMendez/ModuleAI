@@ -154,12 +154,15 @@ def test_model(params, df_x_test, df_y_test, stats):
     if(stats):
         [precision, recall, f1_score, accuracy] = stats_model(
             predictions, df_y_test)
+        print("Error: {:.4f}".format(error))
         print("Precision: {:.4f}".format(precision))
         print("Recall: {:.4f}".format(recall))
         print("F1-Score: {:.4f}".format(f1_score))
         print("Accuracy: {:.4f}".format(accuracy))
+       
 
     return [error, predictions]
+
 
 
 def plot_model_result(params, df_x_train, df_x_test, df_y_train, df_y_test):
@@ -172,7 +175,6 @@ def plot_model_result(params, df_x_train, df_x_test, df_y_train, df_y_test):
     indices_train = df_x_train.index
     indices_test = df_x_test.index
 
-    # Plotting the index of df_x_train versus predictions_train
     plt.figure(figsize=(12, 6))
 
     # Plot for train data
@@ -185,3 +187,18 @@ def plot_model_result(params, df_x_train, df_x_test, df_y_train, df_y_test):
     plt.ylabel('Value')
     plt.title('Train Data: Index vs Predictions and Actual Labels')
     plt.legend()
+
+    # Plot for test data
+    plt.subplot(1, 2, 2)
+    plt.scatter(indices_test, predictions_test,
+                color='green', label='Predictions')
+    plt.scatter(indices_test, df_y_test,
+                color='red', label='Actual Labels')
+    plt.xlabel('Index')
+    plt.ylabel('Value')
+    plt.title('Test Data: Index vs Predictions and Actual Labels')
+    plt.legend()
+
+    plt.tight_layout()  
+    plt.show()  
+

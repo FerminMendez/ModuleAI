@@ -110,31 +110,47 @@ periods = 3000
 
 The results of the model are:
 
-Stats train
-Precision: 0.9978
-Recall: 0.7662
-F1-Score: 0.8668
-Accuracy: 0.7649
+Initial hypotesis:  [0.17557402 0.14087837 0.72957655 0.59168058 0.76821912]
+Finished gradient iterations
 
-Stats test
-Model tested
-Precision: 0.9965
-Recall: 0.7730
-F1-Score: 0.8707
-Accuracy: 0.7710
+The final error of the current hypothesis is 9862.5560
 
-Initial Random guess
+
 Stats train
-Precision: 0.9978
-Recall: 0.7662
-F1-Score: 0.8668
-Accuracy: 0.7649
+
+CurrentParams: [-2.13694879  1.45386656  1.51824624  1.17568991  1.27390486]
+Error: 9862.4073
+Precision: 0.9984
+Recall: 0.7654
+F1-Score: 0.8665
+Accuracy: 0.7644
 Stats test
 
-Precision: 0.9965
-Recall: 0.7730
-F1-Score: 0.8707
-Accuracy: 0.7710
+Error: 4818.5420
+Precision: 0.9975
+Recall: 0.7708
+F1-Score: 0.8696
+Accuracy: 0.7694
+
+Intial params: [0.17557402 0.14087837 0.72957655 0.59168058 0.76821912]
+Stats train
+Error: 3362.6589
+Precision: 0.2408
+Recall: 1.0000
+F1-Score: 0.3881
+Accuracy: 0.2408
+
+Stats test
+Error: 1645.5437
+Precision: 0.2362
+Recall: 1.0000
+F1-Score: 0.3822
+Accuracy: 0.2362
+
 
 ## Conclusions
 
+The initial random guess has less error has less error than the trained model. But has a recall of 1 this mean that the model is overfitting. The trained model has a recall of 0.77 and a precision of 0.99. 
+This means that the model is not overfitting and has a good performance. 
+The model has a good accuracy of 0.76. The model can be improved by using more features and more data.
+In both cases the train and test models are very similar, this means that the model is not overfitting.
