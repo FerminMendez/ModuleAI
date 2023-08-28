@@ -53,7 +53,7 @@ df_x_test=include_bias(df_x_test)
 #df_x_test=df_test.drop(columns=['class'])
 
 
-##########################################3 Call the logistic model functions
+########################################## 3 Call the logistic model functions
 
 num_params = df_x_train.shape[1] #Number of features
 # Create a hypotesis
@@ -74,12 +74,15 @@ plot_model_result(currentParams, df_x_train,df_x_test, df_y_train, df_y_test)
 
 #Analize out results
 print('Stats train')
+print('CurrentParams:',currentParams)
 test_model(currentParams,df_x_train,df_y_train,True)
 print('Stats test')
 test_model(currentParams,df_x_test,df_y_test,True)
 
-#Compare with the random params 
+#Compare with the random params
+
 print('Initial Random guess')
+print('Intial params:',intialGuess)
 print('Stats train')
 test_model(intialGuess,df_x_train,df_y_train,True)
 print('Stats test')
