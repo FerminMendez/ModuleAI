@@ -1,72 +1,89 @@
 
+# Logistic regresion model by Fermín Méndez A01703366
 import pandas as pd
 import numpy as np
 
 # main.py
 
-#Import from logistic model functions
+#Import from logistic model functions 
 from logistic_model import include_bias, plot_errors_GD
 from logistic_model import updateParamsDesendentGradient as train
 from logistic_model import test_model, plot_model_result
+from logistic_model import scale_dataframe
 
 
-df_x_train = pd.DataFrame({'nums': [1, 2, 3, 4], 'nums2': [7, 8, 9, 10]})
-df_y_train = pd.DataFrame({'class1': [0, 1, 1, 1]})
-#print(df_x_train)
-#print(df_y_train)
-print(include_bias(df_x_train))
 
+######################################### 1. Import the dataset 
 # Read the CSV file into a DataFrame
 
 # Specify the column names
 names = ['age', 'workclass', 'fnlwgt', 'education', 'education-num', 'marital-status', 
          'occupation', 'relationship', 'race', 'sex', 'capital-gain', 'capital-loss', 
          'hours-per-week', 'native-country', 'class']
+#Read the original files
 df = pd.read_csv('adult.data', names=names)
-print(df.head())
+df_test=pd.read_csv('adult.test', names=names)
 
-print(df.head())
-print(df.info())
-print(df.describe())
+######################  2. Clean the data and define train and test data: df_x_train, df_y_train, df_x_test and df_y_tet.
+
+#Define y_train and y_test
+#train
+df_y_train= df[['class']]
+df_y_train= pd.get_dummies(df_y_train, columns=['class'], prefix='', prefix_sep='')
+df_y_train=df_y_train.iloc[:, 1]
+#test
+df_y_test= df_test[['class']]
+df_y_test= pd.get_dummies(df_y_test, columns=['class'], prefix='', prefix_sep='')
+df_y_test=df_y_test.iloc[:, 1]
+
+#Define x train and x test
+#Selected columns
+selected=['age','capital-gain', 'capital-loss', 'hours-per-week']
+#train
+df_x_train=df[selected] #Select the numeric columns
+df_x_train=scale_dataframe(df_x_train)
+df_x_train=include_bias(df_x_train)
+#test
+df_x_test=df_test[selected] #Select the numeric columns
+df_x_test=scale_dataframe(df_x_test)
+df_x_test=include_bias(df_x_test)
 
 
+#df_y_test=df_test[['class']]
+#df_x_test=df_test.drop(columns=['class'])
 
 
+##########################################3 Call the logistic model functions
 
-num_params = df_x_train.shape[1]
+num_params = df_x_train.shape[1] #Number of features
 # Create a hypotesis
 currentParams = np.random.rand(num_params)
-
+intialGuess=currentParams
 print("Initial hypotesis: ", currentParams)
 
 # train=updateParamsDesendentGradient(currentParams,df_x,df_y,alfa,periods):
 alfa = 0.05  # Alfa is the learning rate
-periods = 1000  # Is the number of repetitions training in the gradient desendent
+periods = 3000  # Is the number of repetitions training in the gradient desendent
 
-
-# To use our train function with gradient desendent (GD) we need:
-# 1 - currentParams: Is the first hypotesis. A numpay array with the same len of the parameters that we can optimize including the bias
-# 2 - df_x: train data as pandas dataframe
-# 3 - df_y: pandas serie with hot encoded class. Only 1's and 0's
-# 4 - alfa: Learning rate
-# 5 - periods: number of iteration in the gradient desendent
-[currentParams, errors] = train(
-    currentParams, df_x_train, df_y_train['class1'], alfa, periods)
+#train with our gradient desendent (GD) function
+[currentParams, errors] = train(currentParams, df_x_train, df_y_train, alfa, periods)
 # The result is a updated hypotesis and a list of the errors obtained for each iteration in GD
 
-# ---------------
-#################################plot_errors_GD(errors)
+plot_errors_GD(errors)
+plot_model_result(currentParams, df_x_train,df_x_test, df_y_train, df_y_test)
 
-##################################[e, pred] = test_model(currentParams, df_x_train, df_y_train)
-#print("e ",e)
-# print("pred",pred)
+#Analize out results
+print('Stats train')
+test_model(currentParams,df_x_train,df_y_train,True)
+print('Stats test')
+test_model(currentParams,df_x_test,df_y_test,True)
 
-##################################plot_model_result(currentParams, df_x_train,df_x_train, df_y_train, df_y_train)
+#Compare with the random params 
+print('Initial Random guess')
+print('Stats train')
+test_model(intialGuess,df_x_train,df_y_train,True)
+print('Stats test')
+test_model(intialGuess,df_x_test,df_y_test,True)
 
-# Logistic regresion model by Fermín Méndez A01703366
 
-# 1. Import the data set to clasify
 
-# 2. Clean the data and define train and test data: df_x_train, df_y_train, df_x_test and df_y_tet.
-
-# 3 Call the logistic model functions

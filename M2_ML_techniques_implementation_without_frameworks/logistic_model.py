@@ -5,11 +5,28 @@ import matplotlib.pyplot as plt
 
 #logistic_model.py
 
+
+    
 #This function will add a 'ones' column in the first position
 def include_bias(df_x):
     num_rows=df_x.shape[0]
     df_x.insert(loc = 0,column="ones",value = np.ones(num_rows).astype('float16'))
     return df_x
+
+
+def min_max_scale(column):
+    #Column must be a serie numeric of pandas
+    min_val = column.min()
+    max_val = column.max()
+    scaled_column = (column - min_val) / (max_val - min_val)
+    return scaled_column
+
+def scale_dataframe(df):
+    scaled_df = pd.DataFrame()
+    for column_name in df.columns:
+        scaled_column = min_max_scale(df[column_name])
+        scaled_df[column_name] = scaled_column
+    return scaled_df
 
 #Define activation function = Sigmoid function
 def actvfun(x):
@@ -47,20 +64,20 @@ def updateParamsDesendentGradient(currentParams, df_x, df_y, alfa, periods):
         temp = currentParams
         evaluated_h = df_x.dot(currentParams)# As we add the 'ones' or bias column in df_x dataframe the matrix dot product is equivalent to evaluate the function for each register.
         if(debug):
-            print("params applied:\n",activated_values) 
+            print("params applied:\n",evaluated_h) 
         activated_values = evaluated_h.apply(actvfun) # Apply activation function to make the regression logistic model
         if(debug):
             print("activation function applied:\n",activated_values)
         diff = activated_values - df_y
         if(debug):
             print("diff:\n",diff)
-        for i in range(num_col):
+        for i in range(num_col): #For loop to update each teta in params and save them in temp variable
             x = diff.dot(df_x.iloc[:, i])
-            temp[i] = currentParams[i] - const_alfa_m * x
+            temp[i] = currentParams[i] - const_alfa_m * x #Update each teta
 
-        currentParams = temp
+        currentParams = temp #Once we update all the tetas we update the hypotesis that are allocated in current params
         curr_error = costfun(activated_values, df_y)
-        errors.append(curr_error)
+        errors.append(curr_error) #Save the error of each iteration
 
         if curr_error < delta:
             print("Repeated %i times to get %f error" % (p, delta))
@@ -88,17 +105,25 @@ def plot_errors_GD(errors):
 #2.df_x_test: Pandas dataframe to test
 #3. df_y_test: Pandas serie of the classifications in hot encoded (only 1's or 0's)
     
-def test_model(params,df_x_test,df_y_test):
+def test_model(params,df_x_test,df_y_test,stats):
+    
     predictions=df_x_test.dot(params)
     predictions=predictions.apply(actvfun)
-    error=costfun(predictions,df_y_test)[0]
+    error=costfun(predictions,df_y_test)
     print("Model tested")
     #print("Type of error: ",type(error))
+    if(stats):
+        [precision, recall, f1_score, accuracy]=stats_model(predictions, df_y_test)
+        print("Precision: {:.4f}".format(precision))
+        print("Recall: {:.4f}".format(recall))
+        print("F1-Score: {:.4f}".format(f1_score))
+        print("Accuracy: {:.4f}".format(accuracy))
+        
     return [error,predictions]
 
 def plot_model_result(params,df_x_train,df_x_test,df_y_train,df_y_test):
-    [error_train,predictions_train]=test_model(params,df_x_train,df_y_train)
-    [error_test,predictions_test]=test_model(params,df_x_test,df_y_test)
+    [error_train,predictions_train]=test_model(params,df_x_train,df_y_train,False)
+    [error_test,predictions_test]=test_model(params,df_x_test,df_y_test,False)
     # Assuming you have your df_x_train, predictions_train, df_y_train, df_x_test, predictions_test, and df_y_test calculated
 
     # Create an array of indices for plotting
@@ -117,18 +142,29 @@ def plot_model_result(params,df_x_train,df_x_test,df_y_train,df_y_test):
     plt.title('Train Data: Index vs Predictions and Actual Labels')
     plt.legend()
 
-    # Plot for test data
-    plt.subplot(1, 2, 2)
-    plt.scatter(indices_test, predictions_test, color='blue', label='Predictions')
-    plt.scatter(indices_test, df_y_test, color='orange', label='Actual Labels')
-    plt.xlabel('Index')
-    plt.ylabel('Value')
-    plt.title('Test Data: Index vs Predictions and Actual Labels')
-    plt.legend()
 
-    plt.tight_layout()
-    plt.show()
+
+def assert_condition(pred, real):
+    return (pred > 0.5 and real) or (pred <= 0.5 and not real)
+
+def stats_model(df_prediction, df_real):
+    true_positive = 0
+    false_positive = 0
+    false_negative = 0
+
+    for i in range(len(df_prediction)):
+        if assert_condition(df_prediction.iloc[i], df_real.iloc[i]):
+            true_positive += 1
+        else:
+            if df_prediction.iloc[i] > 0.5:
+                false_positive += 1
+            else:
+                false_negative += 1
+
+    precision = true_positive / (true_positive + false_positive)
+    recall = true_positive / (true_positive + false_negative)
+    f1_score = 2 * (precision * recall) / (precision + recall)
+
+    accuracy = (true_positive) / len(df_prediction)
     
-    print("The train error is %f " % error_train)
-    print("The test error is %f " % error_test)
-    return [predictions_train,predictions_test]
+    return [precision, recall, f1_score, accuracy]
