@@ -165,3 +165,7 @@ https://drive.google.com/file/d/1huTzOubNrabmEod0Q2iaLKvGh0MpODlV/view?usp=shari
 
 Exist a big difference between the train accuracy and the test accuracy. This is a sign of overfitting. The model is learning the patterns of the train dataset but it is not able to generalize to the test dataset. But, compared to the first model, the accuracy is much higher and the loss is much lower. A test accuracy of 0.785 is a good result. We have to try to reduce the overfitting.
 
+## Deploy
+
+We saved the second model in a .h5 file. We have created a python script that loads the model and predicts the type of pokemon of an image. The script takes an image as input and returns the type of pokemon of the image. The notebook DeployPokemonClassification.ipynb contains the script. We must add some pokemons to a folder and then read it and predict the type of pokemon.
+
