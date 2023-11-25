@@ -155,7 +155,7 @@ The VGG16 model is not able to recognize pokemon types but it is able to recogni
 **Train Accuarcy: 0.9386**
 **Test Acuarcy :  0.785**
 Batch_size: 32
-Epochs: 10
+Epochs: 10-
 - loss: 0.1619
 - val_loss: 1.0303
 - val_accuracy: 0.8135
